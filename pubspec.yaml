@@ -1,0 +1,24 @@
+name: vehicle_image_validation
+description: A Flutter app for vehicle image validation
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  camera: ^0.10.0
+  path_provider: ^2.0.11
+  path: ^1.8.2
+  http: ^0.13.5
+  cupertino_icons: ^1.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.1
+
+flutter:
+  uses-material-design: true 
