@@ -1,0 +1,10 @@
+Model: efficientnet
+Initial epochs: 30
+Fine-tuning epochs: 20
+Batch size: 16
+Image size: 224x224
+Training samples: 1453
+Validation samples: 363
+Initial training time: 150.30 seconds
+Fine-tuning time: 164.27 seconds
+Total training time: 314.57 seconds

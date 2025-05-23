@@ -22,7 +22,19 @@ class VehicleImageUploader extends StatefulWidget {
 }
 
 class _VehicleImageUploaderState extends State<VehicleImageUploader> {
-  final String apiBaseUrl = 'http://localhost:9000'; // Replace with your FastAPI URL
+  // Base URL can be configured for different environments
+  // For local development: http://localhost:9000
+  // For railway: https://your-app-name.up.railway.app
+  // For production: https://your-production-domain.com
+  final String apiBaseUrl = 'http://192.168.10.131:9000'; // Can be changed to railway URL
+  
+  // Support for railway deployment - add this new method
+  String getApiBaseUrl() {
+    // Check if URL is stored in SharedPreferences or passed via parameters
+    // For now, return the default URL
+    return apiBaseUrl;
+  }
+  
   Map<VehicleSide, UploadStatus> uploadStatus = {
     VehicleSide.front: UploadStatus.pending,
     VehicleSide.rear: UploadStatus.pending,
@@ -65,7 +77,7 @@ class _VehicleImageUploaderState extends State<VehicleImageUploader> {
     
     try {
       final response = await http.get(
-        Uri.parse('$apiBaseUrl/session/${widget.sessionId}'),
+        Uri.parse('${getApiBaseUrl()}/session/${widget.sessionId}'),
       );
       
       if (response.statusCode == 200) {
@@ -178,7 +190,7 @@ class _VehicleImageUploaderState extends State<VehicleImageUploader> {
     try {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('$apiBaseUrl/upload_image/${widget.sessionId}'),
+        Uri.parse('${getApiBaseUrl()}/upload_image/${widget.sessionId}'),
       );
       
       request.files.add(

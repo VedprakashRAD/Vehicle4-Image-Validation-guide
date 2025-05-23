@@ -1,9 +1,24 @@
+# API Framework
 fastapi==0.103.1
 uvicorn==0.23.2
 python-multipart==0.0.6
+
+# Image Processing
 pillow==10.0.0
 imagehash==4.3.1
+opencv-python==4.8.0.76
+
+# Deep Learning
 numpy==1.24.3
-tensorflow==2.13.0
+tensorflow-macos==2.13.0; sys_platform == 'darwin' and 'arm' in platform_machine
+tensorflow==2.13.0; sys_platform != 'darwin' or 'arm' not in platform_machine
+
+# For YOLOv8
+ultralytics==8.0.188
+
+# Utilities
 python-dotenv==1.0.0
-opencv-python==4.8.0.76 
+pydantic==1.10.8
+psutil==5.9.5
+typing-extensions==4.5.0
+easyocr==1.7.2

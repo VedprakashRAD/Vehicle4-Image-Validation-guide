@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Download Vehicle Image Validator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            margin: 20px 0;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .note {
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        .qr-code {
+            margin: 20px auto;
+            max-width: 200px;
+        }
+        .ip-list {
+            margin: 20px 0;
+            text-align: left;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .ip-list p {
+            margin: 5px 0;
+        }
+    </style>
+    <script>
+        // Get the current server URL
+        function getCurrentServerUrl() {
+            return window.location.protocol + "//" + window.location.host;
+        }
+        
+        // Redirect to download URL
+        function downloadApp() {
+            var downloadUrl = getCurrentServerUrl() + "/download-app";
+            window.location.href = downloadUrl;
+        }
+        
+        // Generate QR code for the download URL
+        function generateQRCode() {
+            var downloadUrl = getCurrentServerUrl() + "/download-app";
+            var qrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(downloadUrl);
+            document.getElementById('qrCode').src = qrCodeUrl;
+            document.getElementById('qrCodeLink').href = downloadUrl;
+        }
+        
+        // Load when page is ready
+        window.onload = function() {
+            document.getElementById('serverUrl').innerText = getCurrentServerUrl();
+            generateQRCode();
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Vehicle Image Validator</h1>
+        <p>Click the button below to download the Android app:</p>
+        
+        <a href="javascript:downloadApp()" class="button">Download App</a>
+        
+        <div class="note">
+            <p>After installing, use this server address in the app:</p>
+            <p><strong id="serverUrl"></strong></p>
+        </div>
+        
+        <div class="qr-code">
+            <p>Or scan this QR code to download:</p>
+            <a id="qrCodeLink" href="#"><img id="qrCode" alt="QR Code" width="200" height="200"></a>
+        </div>
+        
+        <div class="ip-list">
+            <p>If the link doesn't work, try one of these addresses:</p>
+            <p>• http://10.1.1.181:9000/download-app</p>
+            <p>• http://localhost:9000/download-app</p>
+            <p>• http://127.0.0.1:9000/download-app</p>
+        </div>
+    </div>
+</body>
+</html> 

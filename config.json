@@ -1,0 +1,8 @@
+{
+  "min_image_width": 800,
+  "min_image_height": 600,
+  "model_path": "models/vehicle_side_model.h5",
+  "detection_confidence_threshold": 0.5,
+  "duplicate_threshold": 5,
+  "session_expiry_hours": 24
+} 

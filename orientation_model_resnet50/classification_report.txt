@@ -1,0 +1,10 @@
+                 precision    recall  f1-score   support
+
+     front_view       0.00      0.00      0.00         2
+ left_side_view       0.48      0.74      0.58        19
+      rear_view       0.00      0.00      0.00        13
+right_side_view       0.39      0.50      0.44        18
+
+       accuracy                           0.44        52
+      macro avg       0.22      0.31      0.26        52
+   weighted avg       0.31      0.44      0.37        52

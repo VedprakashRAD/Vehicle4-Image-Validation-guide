@@ -1,168 +1,115 @@
-# Vehicle Image Validation App
+# Vehicle Orientation Detection System
 
-This Flutter application works with a FastAPI backend to help users capture and validate vehicle images from all sides (front, rear, left, right). The app guides users through the image capture process and validates images in real-time.
+This project implements a vehicle orientation detection system that can identify if uploaded vehicle images (cars, bikes, scooters) are correctly oriented as front, rear, left, or right views.
 
-## Application Overview
+## Project Overview
 
-The Flutter application has been successfully created with all the necessary components for vehicle image validation. The app includes:
-- A main screen that manages sessions and provides access to the vehicle image uploader
-- A dedicated vehicle image uploader screen with a grid layout for capturing all four sides of a vehicle
-- A camera guide component with visual overlays to help users properly frame their vehicle during image capture
-- Integration with a FastAPI backend through HTTP requests
-- Proper permissions set up for both Android and iOS platforms
+The system can verify if an uploaded image matches the expected orientation and provide appropriate feedback messages like "Front side uploaded successfully" or "Mismatch: Left side is detected for the intended Right side".
 
-The application follows a user-friendly flow where:
-- A session is created when the app starts
-- Users can capture images of each vehicle side with guided assistance
-- Images are validated in real-time with the backend
-- Progress is tracked and users can complete the inspection when all sides are validated
+## Components
 
-To run the application, you'll need to:
-- Have Flutter installed and set up on your development machine
-- Run `flutter pub get` to install dependencies
-- Connect to your FastAPI backend by updating the `apiBaseUrl` in `vehicle_image_uploader.dart`
-- Run the app with `flutter run`
+1. **Data Collection**
+   - `collect_large_dataset.py`: Downloads vehicle images from the web for four orientations (front, rear, left, right) including cars, bikes, and scooters.
 
-The app is now ready to be tested and integrated with your FastAPI backend!
+2. **Data Preprocessing**
+   - `preprocess_large_dataset.py`: Resizes, normalizes, and augments the collected images for better model training.
+   - `clean_dataset.py`: Removes corrupted images from the dataset.
 
-## Features
+3. **Model Training**
+   - `train_improved_model.py`: Trains an EfficientNetB0 model to classify vehicle orientations.
 
-- Camera guide with visual overlays to help position the vehicle correctly
-- Real-time image validation
-- Status tracking for each vehicle side
-- Session management
-- User-friendly interface with progress tracking
-- Smart image framing guidance with vehicle-specific overlays
-- Detailed feedback for image quality improvement
-- Secure image uploads with session management
+4. **Testing and Evaluation**
+   - `test_orientation_model.py`: Tests the trained model on new images.
+   - `download_test_images.py`: Downloads test images for evaluation.
 
-## Getting Started
+5. **Integration**
+   - `vehicle_orientation_verifier.py`: Demonstrates how to use the model in a real application.
 
-### Prerequisites
+## Usage
 
-- Flutter SDK (>= 2.17.0)
-- Dart SDK
-- Android Studio or VS Code with Flutter extensions
-- An iOS or Android device (or emulator) for testing
+### Collecting Dataset
 
-### Installation
-
-1. Clone this repository:
-```
-git clone <repository-url>
+```bash
+python collect_large_dataset.py
 ```
 
-2. Navigate to the project directory:
-```
-cd vehicle_image_validation
-```
+### Preprocessing Dataset
 
-3. Install dependencies:
-```
-flutter pub get
+```bash
+python preprocess_large_dataset.py --input_dir large_vehicle_dataset --output_dir processed_large_dataset
 ```
 
-4. Update the FastAPI server URL:
-   - Open `lib/vehicle_image_uploader.dart`
-   - Update the `apiBaseUrl` variable with your FastAPI server URL
+### Training Model
 
-### Running the App
-
-```
-flutter run
+```bash
+python train_improved_model.py
 ```
 
-## User Flow
+### Testing Model
 
-1. **Home Screen**: The app starts with a home screen that creates a new session.
-2. **Image Capturing**: Tapping "START INSPECTION" takes you to the capturing interface with four buttons for different vehicle sides.
-3. **Guided Camera View**:
-   - Each side has specific guidelines to help position the vehicle properly
-   - Front and rear sides have a license plate detection area
-   - Side views have horizontal alignment guides
-4. **Image Validation**: After capturing, preview the image and choose to accept or retake.
-5. **Upload and Verification**: The image is uploaded to the backend which validates if it's a proper vehicle image from the claimed angle.
-6. **Session Completion**: Once all sides are captured, the app allows completion of the inspection.
+```bash
+python test_orientation_model.py --model [model_path] --test_dir test_images --output_dir test_results
+```
 
-## API Endpoints Required
+### Verifying Vehicle Orientation
 
-The application expects the following API endpoints to be available on your FastAPI server:
+```bash
+python vehicle_orientation_verifier.py --image [image_path] --expected [front/rear/left/right] --output [output_path]
+```
 
-1. `POST /session` - Creates a new session 
-   - Returns: `{"session_id": "unique_id"}`
+## Model Performance
 
-2. `GET /session/{session_id}` - Gets the status of a session
-   - Returns: `{"vehicle_sides": {"front": bool, "rear": bool, "left": bool, "right": bool}}`
+The model was trained on approximately 1,800 images across four orientations (front, rear, left, right). The current model has a bias towards detecting left-side views, which can be improved with a larger and more balanced dataset.
 
-3. `POST /upload_image/{session_id}` - Uploads and validates an image
-   - Form data:
-     - `image`: Image file
-     - `side`: String ("front", "rear", "left", or "right")
-   - Returns: `{"is_valid": bool, "message": "validation message"}`
+## Future Improvements
 
-## Architecture
-
-The app follows a simple yet effective architecture:
-
-- `main.dart` - Entry point with app configuration and home screen
-- `vehicle_image_uploader.dart` - Main upload interface for all vehicle sides
-- `vehicle_camera_guide.dart` - Camera interface with visual guides for capture
-
-### Key Components
-
-#### Home Screen (`main.dart`)
-- Manages session creation with FastAPI backend
-- Provides user interface for starting/restarting the inspection process
-- Handles session state and user feedback
-
-#### Image Uploader (`vehicle_image_uploader.dart`)
-- Grid interface for selecting which side of the vehicle to capture
-- Tracks upload status for each side (pending, uploading, success, failed)  
-- Shows previews of uploaded images and session progress
-- Communicates with backend API to validate uploads
-
-#### Camera Guide (`vehicle_camera_guide.dart`)
-- Implements a camera view with specialized overlays for each vehicle side
-- Provides visual guidance for proper vehicle positioning
-- Offers image preview and accept/retake functionality
-- Implements custom painters for the guide overlays specific to each vehicle side
-
-### Technical Implementation
-
-- **State Management**: Uses Flutter's StatefulWidget pattern for component-level state
-- **Camera Access**: Implements the camera plugin with proper lifecycle management
-- **Custom Drawing**: Uses CustomPainter for vehicle framing guidelines
-- **API Integration**: HTTP-based communication with FastAPI backend
-- **Image Handling**: Temporary storage and uploading of captured images
-
-## Permissions
-
-The app requires the following permissions:
-
-### Android
-- Camera (for capturing images)
-- Internet (for API communication)
-- Storage (for saving temporary images)
-
-### iOS
-- Camera usage
-- Photo library usage
+1. Collect a larger and more balanced dataset with 1,000+ images per orientation.
+2. Implement more sophisticated data augmentation techniques.
+3. Try different model architectures or ensemble methods.
+4. Add more vehicle types and variations for better generalization.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT License
 
-## Troubleshooting
+## Credits
 
-- If camera permissions are denied, make sure to grant them in your device settings
-- If images fail to upload, check your server URL and network connection
-- iOS simulators don't support camera functionality - use a physical device for testing
-- If the app crashes when accessing the camera, ensure you've added the proper permissions to both Android and iOS config files
+- YOLOv8: https://github.com/ultralytics/ultralytics
+- TensorFlow: https://www.tensorflow.org/
+- FastAPI: https://fastapi.tiangolo.com/ 
 
-## Future Enhancements
+## Deployment on Railway
 
-- Machine learning for automatic vehicle position detection
-- Automatic image enhancement for poor lighting conditions
-- Image blur detection and automatic notification
-- Support for different vehicle types with specialized overlays
-- Offline mode with upload queuing 
+This application is configured for deployment on [Railway](https://railway.app). To deploy:
+
+1. **Sign up for Railway**:
+   - Create an account at [Railway.app](https://railway.app)
+   - Install the Railway CLI if you want to deploy from your local machine
+
+2. **Deploy the API**:
+   - From the Railway dashboard, create a new project
+   - Choose "Deploy from GitHub" and select your repository
+   - Railway will automatically detect the configuration from `railway.toml`
+   - The application will be deployed and a public URL will be provided
+
+3. **Environment Variables**:
+   - You may need to set environment variables in the Railway dashboard
+   - Important variables include `PORT`, `MIN_WIDTH`, `MIN_HEIGHT`, etc.
+
+4. **Update the Flutter App**:
+   - Open the Flutter app code
+   - Update the `apiBaseUrl` in `vehicle_image_uploader.dart` to your Railway URL:
+     ```dart
+     final String apiBaseUrl = 'https://your-railway-app.up.railway.app';
+     ```
+   - Rebuild and deploy the Flutter app
+
+5. **Continuous Deployment**:
+   - Railway automatically deploys when you push changes to your GitHub repository
+   - You can configure specific branches for deployment in the Railway dashboard
+
+6. **Custom Domain**:
+   - In the Railway dashboard, go to Settings
+   - Configure a custom domain if desired
+
+For more details, refer to [Railway documentation](https://docs.railway.app). 
