@@ -89,13 +89,57 @@ def detect_vehicle_orientation(image_data):
         # Make prediction
         predictions = model.predict(img)[0]
         
+        # Get all class confidences
+        confidences = {CLASS_NAMES[i]: float(predictions[i]) for i in range(len(CLASS_NAMES))}
+        print(f"Orientation confidences: {confidences}")
+        
         # Get the predicted class and confidence
         predicted_class_idx = np.argmax(predictions)
         confidence = float(predictions[predicted_class_idx])
         predicted_class = CLASS_NAMES[predicted_class_idx]
         
-        # Lower the confidence threshold for better usability with our model
+        # Special handling for rear view - use a lower threshold
+        if predicted_class == "rear_view" and confidence >= 0.15:  # Lower threshold for rear view
+            orientation = CLASS_MAPPING.get(predicted_class, predicted_class)
+            return {
+                "has_vehicle": True,
+                "orientation": orientation,
+                "confidence": confidence,
+                "class_name": predicted_class
+            }
+        
+        # Special handling for front view - also use a lower threshold
+        if predicted_class == "front_view" and confidence >= 0.15:  # Lower threshold for front view
+            orientation = CLASS_MAPPING.get(predicted_class, predicted_class)
+            return {
+                "has_vehicle": True,
+                "orientation": orientation,
+                "confidence": confidence,
+                "class_name": predicted_class
+            }
+            
+        # For other views, use the standard threshold
         if confidence < 0.35:
+            # Check if rear view has any significant confidence, even if not the highest
+            rear_confidence = confidences.get("rear_view", 0.0)
+            if rear_confidence >= 0.15:  # If rear view has some confidence
+                return {
+                    "has_vehicle": True,
+                    "orientation": "Rear",  # Force rear view
+                    "confidence": rear_confidence,
+                    "class_name": "rear_view"
+                }
+                
+            # Check if front view has any significant confidence
+            front_confidence = confidences.get("front_view", 0.0)
+            if front_confidence >= 0.15:  # If front view has some confidence
+                return {
+                    "has_vehicle": True,
+                    "orientation": "Front",  # Force front view
+                    "confidence": front_confidence,
+                    "class_name": "front_view"
+                }
+                
             return {
                 "has_vehicle": False,
                 "message": "No vehicle is detected",
